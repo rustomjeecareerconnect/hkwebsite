@@ -117,6 +117,39 @@ export async function POST(request) {
         if (!emailResponse.ok) {
           const errData = await emailResponse.text();
           console.error('Failed to send email via Resend:', errData);
+
+          // If in Resend testing mode (restricted to account email), deliver to account owner so inquiry is never lost
+          if (errData.includes('You can only send testing emails to your own email address')) {
+            try {
+              await fetch('https://api.resend.com/emails', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${resendApiKey}`,
+                },
+                body: JSON.stringify({
+                  from: 'onboarding@resend.dev',
+                  to: ['rustomjeecareerconnect@gmail.com'],
+                  reply_to: email,
+                  subject: `[Inquiry Forwarded for ${notificationEmail}] ${subject} - from ${name}`,
+                  html: `
+                    <div style="background:#fff3cd;border:1px solid #ffeeba;padding:12px 16px;border-radius:6px;margin-bottom:15px;color:#856404;font-size:13px;font-family:sans-serif;">
+                      <strong>Resend Sandbox Notice:</strong> This message was addressed to <strong>${escapeHtml(notificationEmail)}</strong>. To deliver directly to that address, verify your domain at <a href="https://resend.com/domains" target="_blank">resend.com/domains</a>.
+                    </div>
+                    <h2>New Website Inquiry</h2>
+                    <p><strong>Name:</strong> ${escapeHtml(name)}</p>
+                    <p><strong>Email:</strong> <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></p>
+                    <p><strong>Subject:</strong> ${escapeHtml(subject)}</p>
+                    <hr style="border:none;border-top:1px solid #e5e7eb;margin:20px 0;" />
+                    <h3>Message:</h3>
+                    <p style="white-space:pre-wrap;background:#f9fafb;padding:15px;border-radius:8px;">${escapeHtml(message)}</p>
+                  `,
+                }),
+              });
+            } catch (fallbackErr) {
+              console.error('Fallback email error:', fallbackErr);
+            }
+          }
         }
       } catch (emailErr) {
         console.error('Email dispatch error:', emailErr);
