@@ -205,9 +205,9 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h4 className="font-heading font-medium text-text-dark dark:text-text mb-1">Email</h4>
-                      <p className="text-text-dark-muted dark:text-text-muted text-sm">
-                        [hkanjer@gmail.com]
-                      </p>
+                      <a href="mailto:hkanjer@gmail.com" className="text-text-dark-muted dark:text-text-muted text-sm hover:text-accent transition-colors">
+                        hkanjer@gmail.com
+                      </a>
                     </div>
                   </div>
                 </div>

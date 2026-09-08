@@ -86,7 +86,7 @@ export async function POST(request) {
 
     // If RESEND_API_KEY is configured in Vercel environment variables, dispatch email
     const resendApiKey = process.env.RESEND_API_KEY;
-    const notificationEmail = process.env.CONTACT_NOTIFICATION_EMAIL || 'info@hanifkanjer.com';
+    const notificationEmail = process.env.CONTACT_NOTIFICATION_EMAIL || 'hkanjer@gmail.com';
     const fromEmail = process.env.CONTACT_FROM_EMAIL || 'Dr. Hanif Kanjer Contact <onboarding@resend.dev>';
 
     if (resendApiKey) {
